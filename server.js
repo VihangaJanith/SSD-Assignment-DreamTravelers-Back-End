@@ -1,103 +1,106 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const bodyParser =require("body-parser");
+const bodyParser = require("body-parser");
 const cors = require("cors");
- require("dotenv").config();
+require("dotenv").config();
 const app = express();
 
-const helmet = require('helmet');
-const csp = require('helmet-csp');
+const helmet = require("helmet");
+const csp = require("helmet-csp");
 
 const PORT = process.env.PORT || 8070;
 
 app.use(helmet());
 
 app.use(
-    csp({
-      directives: {
-        defaultSrc: ["'self'", 'localhost:3000'], 
-        scriptSrc: ["'self'", "'unsafe-inline'", 'localhost:3000'], 
-        styleSrc: ["'self'", 'localhost:3000'], 
-      },
-    })
-  );
+  csp({
+    directives: {
+      defaultSrc: ["'self'", "localhost:3000"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "localhost:3000"],
+      styleSrc: ["'self'", "localhost:3000"],
+    },
+  })
+);
 
+app.use((req, res, next) => {
+  res.setHeader("X-Frame-Options", "SAMEORIGIN");
+  next();
+});
 
 app.use(cors());
 app.use(bodyParser.json());
 
 const URL = process.env.MONGODB_URL;
 
-mongoose.connect(URL,{
-    useCreateIndex: true,
-    useFindAndModify: false,
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+mongoose.connect(URL, {
+  useCreateIndex: true,
+  useFindAndModify: false,
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
 });
 
 const connection = mongoose.connection;
-connection.once("open", () =>{
-    console.log("Mongodb connection success!");
-})
+connection.once("open", () => {
+  console.log("Mongodb connection success!");
+});
 
 const equipmentRouter = require("./routes/equipment.js");
-app.use("/equipment",equipmentRouter);
+app.use("/equipment", equipmentRouter);
 
 const AddRouter = require("./routes/Registers.js");
-app.use("/Register",AddRouter);
+app.use("/Register", AddRouter);
 
 const paymentRouter = require("./routes/payments.js");
 app.use(paymentRouter);
 
-const travelPackageRouter=require("./routes/travelPackage.js");
-app.use("/travelpackages",travelPackageRouter);
+const travelPackageRouter = require("./routes/travelPackage.js");
+app.use("/travelpackages", travelPackageRouter);
 
-const inquiryRouter=require("./routes/inquiry.js");
-app.use("/inquiry",inquiryRouter);
+const inquiryRouter = require("./routes/inquiry.js");
+app.use("/inquiry", inquiryRouter);
 
-const inquiryAdminRouter=require("./routes/InquiryAdmin.js");
-app.use("/inquiryAdmin",inquiryAdminRouter);
+const inquiryAdminRouter = require("./routes/InquiryAdmin.js");
+app.use("/inquiryAdmin", inquiryAdminRouter);
 
 const UserRoute = require("./routes/UserProfile.js");
-app.use("/User",UserRoute);
+app.use("/User", UserRoute);
 
 const adminlogRouter = require("./routes/AdminLogin");
-app.use("/Admin",adminlogRouter);
+app.use("/Admin", adminlogRouter);
 
 const deleteuserrouter = require("./routes/Admin_Panel_ProfileManagement");
-app.use("/access",deleteuserrouter);
+app.use("/access", deleteuserrouter);
 
 const hotelBookingRouter = require("./routes/HotelBooking");
-app.use("/hotelbooking",hotelBookingRouter);
+app.use("/hotelbooking", hotelBookingRouter);
 
-const packageBookingRouter=require("./routes/Packagebooking.js");
-app.use("/packagebooking",packageBookingRouter);
+const packageBookingRouter = require("./routes/Packagebooking.js");
+app.use("/packagebooking", packageBookingRouter);
 
 const hotelPackageRouter = require("./routes/HotelPackage");
-app.use("/hotelpackage",hotelPackageRouter);
+app.use("/hotelpackage", hotelPackageRouter);
 
 const GuideRouter = require("./routes/Guide");
-app.use("/guide",GuideRouter);
+app.use("/guide", GuideRouter);
 
 const activityRouter = require("./routes/Activity");
-app.use("/activities",activityRouter);
+app.use("/activities", activityRouter);
 
 const activityuserRouter = require("./routes/ActivityUser");
-app.use("/activityselect",activityuserRouter);
+app.use("/activityselect", activityuserRouter);
 
 const feedbackRouter = require("./routes/Feedback");
-app.use("/feedback",feedbackRouter);
+app.use("/feedback", feedbackRouter);
 
 const contactUsRouter = require("./routes/ContactUs");
-app.use("/contactus",contactUsRouter);
+app.use("/contactus", contactUsRouter);
 
 const guideRequestRouter = require("./routes/GuideRequest");
-app.use("/guiderequest",guideRequestRouter);
+app.use("/guiderequest", guideRequestRouter);
 
-const TravlPackagereviewRoutes = require('./routes/TravelPackageRating');
-app.use('/travelpackage/review', TravlPackagereviewRoutes);
+const TravlPackagereviewRoutes = require("./routes/TravelPackageRating");
+app.use("/travelpackage/review", TravlPackagereviewRoutes);
 
-
-app.listen(PORT, () =>{
-    console.log(`The port is : ${PORT}`);
-})
+app.listen(PORT, () => {
+  console.log(`The port is : ${PORT}`);
+});
